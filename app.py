@@ -7,7 +7,7 @@ import os
 from google.auth import default
 
 app = Flask(__name__)
-CORS(app)
+CORS(app)  # Mengizinkan frontend mengakses backend
 
 # 🔹 Autentikasi Google Sheets
 service_account_info = json.loads(os.getenv("SERVICE_ACCOUNT_JSON"))
@@ -34,10 +34,12 @@ def register():
     email = data["email"]
     password = data["password"]
 
+    # Cek apakah email sudah ada
     existing_users = sheet.col_values(1)
     if email in existing_users:
         return jsonify({"message": "❌ Email sudah terdaftar!"}), 400
 
+    # Hash password dan simpan ke spreadsheet
     hashed_pw = hash_password(password)
     sheet.append_row([email, hashed_pw])
 
